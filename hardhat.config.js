@@ -1,13 +1,24 @@
-import "@nomiclabs/hardhat-waffle";
-import "dotenv/config";
+require("@nomiclabs/hardhat-waffle");
+require("dotenv").config();
 
-export const networks = {
-  hardhat: {
-    chainId: 1337,
+module.exports = {
+  defaultNetwork: "hardhat",
+  networks: {
+    hardhat: {
+      chainId: 1337,
+    },
+    mumbai: {
+      url: process.env.PROD_ALCHEMY_KEY,
+      accounts: [process.env.PRIVATE_KEY],
+    },
   },
-  mumbai: {
-    url: process.env.PROD_ALCHEMY_KEY,
-    accounts: [process.env.PRIVATE_KEY],
+  solidity: {
+    version: "0.8.4",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
   },
 };
-export const solidity = "0.8.4";
