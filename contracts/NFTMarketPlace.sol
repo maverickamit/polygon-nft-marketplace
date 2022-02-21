@@ -86,4 +86,24 @@ contract NFTMarketplace is ReentrancyGuard {
         _itemsSold.increment();
         payable(owner).transfer(listingPrice);
     }
+
+    //Returns all unsold items currently at the marketplace
+    function fetchMarketItems() public view returns (MarketItem[] memory){
+        uint itemCount = _itemIds.current(); 
+        uint unsoldItemCount = _itemIds.current() - _itemsSold.current();
+        uint currentIndex = 0;
+
+        MarketItem[] memory items = new MarketItem[](unsoldItemCount);
+
+        for(uint i=0;i<itemCount;i++){
+            
+            if(idToMarketItem[i+1].owner == address(0)){ //owner is empty
+                uint currentItemId = idToMarketItem[i+1].itemId;
+                MarketItem memory currentItem = idToMarketItem[currentItemId];
+                items[currentIndex]= currentItem;
+                currentIndex++;
+            }
+        }
+        return items;
+    }
 }
