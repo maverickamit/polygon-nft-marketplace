@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract NFTMarketplace is ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
-    
+    Counters.Counter private _itemsSold;
     address payable owner;
     uint256 listingPrice = 0.025 ether;
 
@@ -38,7 +38,7 @@ contract NFTMarketplace is ReentrancyGuard {
         uint256 price,
         bool sold
         );
-
+    //creates an item to be sold on the marketplace
     function createMarketItem(
         address nftContract,
         uint256 tokenId,
@@ -72,4 +72,18 @@ contract NFTMarketplace is ReentrancyGuard {
         });
     }
 
+    //buys an item on the marketplace
+    function buyMarketItem(
+        uint itemId
+    ) public payable nonReentrant{
+        //Here storage points to the same data location instead of creating a copy 
+        MarketItem storage sellingItem = idToMarketItem[itemId];
+        require(msg.value>= sellingItem.price,"Please submit the asking price in order to complete the purchase");
+        sellingItem.seller.transfer(msg.value);
+        IERC721(sellingItem.nftContract).transferFrom(address(this), msg.sender, sellingItem.tokenId);
+        sellingItem.owner= payable(msg.sender);
+        sellingItem.sold= true;
+        _itemsSold.increment();
+        payable(owner).transfer(listingPrice);
+    }
 }
