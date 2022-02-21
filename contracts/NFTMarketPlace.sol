@@ -5,10 +5,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+
 contract NFTMarketplace is ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
+    
     address payable owner;
     uint256 listingPrice = 0.025 ether;
 
@@ -38,7 +40,11 @@ contract NFTMarketplace is ReentrancyGuard {
         uint256 price,
         bool sold
         );
-    //creates an item to be sold on the marketplace
+
+    function getListingPrice() public view returns (uint256) {
+        return listingPrice;
+    }
+
     function createMarketItem(
         address nftContract,
         uint256 tokenId,
@@ -71,7 +77,7 @@ contract NFTMarketplace is ReentrancyGuard {
             sold: false
         });
     }
-
+    
     //buys an item on the marketplace
     function buyMarketItem(
         uint itemId
@@ -106,8 +112,8 @@ contract NFTMarketplace is ReentrancyGuard {
         }
         return items;
     }
-    
-     //Returns all the items currently owned by the user
+
+    //Returns all the items currently owned by the user
     function fetchMyNFTs() public view returns (MarketItem[] memory){
         uint itemCount = _itemIds.current(); 
         uint userItemOwnedCount = 0;
@@ -131,6 +137,33 @@ contract NFTMarketplace is ReentrancyGuard {
             }
         }
         return userItemsOwned;
+    }
+
+    //Returns all the items created by the user
+    function fetchItemsCreated() public view returns (MarketItem[] memory){
+
+        uint itemCount = _itemIds.current(); 
+        uint userItemCreatedCount = 0;
+        uint currentIndex = 0;
+        
+        //calculates total number of items created by the user
+        for(uint i=0;i<itemCount; i++){
+            if(idToMarketItem[i+1].seller == msg.sender){
+               userItemCreatedCount++;
+            }
+        }
+
+        MarketItem[] memory userItemsCreated = new MarketItem[](userItemCreatedCount);
+
+
+        for(uint i=0; i<itemCount; i++){
+            if(idToMarketItem[i+1].seller == msg.sender){
+                uint currentItemId = idToMarketItem[i+1].itemId;
+               userItemsCreated[currentIndex]= idToMarketItem[currentItemId];
+               currentIndex++;
+            }
+        }
+        return userItemsCreated;
     }
 
 }
