@@ -44,7 +44,7 @@ export default function Home() {
   };
 
   const buyNft = async (nft) => {
-    const web3Modal = new Web3Modal();
+    const web3Modal = new Web3Modal({});
     const instance = await web3Modal.connect();
     const provider = new ethers.providers.Web3Provider(instance);
     const signer = provider.getSigner();
@@ -55,7 +55,7 @@ export default function Home() {
     );
 
     const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-    const transaction = await marketPlaceContract.sellMarketItem(nft.itemId, {
+    const transaction = await marketPlaceContract.buyMarketItem(nft.tokenId, {
       value: price,
     });
     await transaction.wait();
