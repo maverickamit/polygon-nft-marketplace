@@ -57,17 +57,22 @@ export default function Home() {
         <div className="px-4" style={{ maxWidth: "1600px" }}>
           <div className="grid gird-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
             {nfts.map((nft, i) => {
-              <div key={i} className="border shadow rounded-xl overflow-hidden">
-                <Image src={"https://via.placeholder.com/600/92c952"} alt="" />
-                <div className="" p-4>
-                  <p
-                    styles={{ heigt: "64px" }}
-                    className="text-2xl font-semibold"
-                  >
-                    {"nft.name"}
-                  </p>
+              return (
+                <div
+                  key={i}
+                  className="border shadow rounded-xl overflow-hidden"
+                >
+                  <img src={nft.image} alt="" />
+                  <div className="" p-4>
+                    <p
+                      styles={{ heigt: "64px" }}
+                      className="text-2xl font-semibold"
+                    >
+                      {nft.name}
+                    </p>
+                  </div>
                 </div>
-              </div>;
+              );
             })}
           </div>
         </div>
